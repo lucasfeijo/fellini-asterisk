@@ -11,6 +11,11 @@ if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
   docker exec $CONTAINER_ID asterisk -rx "dialplan show default"
 else
   echo "Running host-based test"
+  if ! command -v asterisk >/dev/null 2>&1; then
+    echo "Installing Asterisk"
+    sudo apt-get update
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y asterisk >/dev/null
+  fi
   TMPDIR=$(mktemp -d)
   mkdir -p "$TMPDIR"/{var,db,keys,spool,run,log}
   cp docker/config/*.conf "$TMPDIR/"
